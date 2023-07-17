@@ -16,29 +16,29 @@ def download():
     try:
         url = request.form['url']
         if not validators.url(url):
-            raise ValueError('URL inválida')
+            raise ValueError('Invalid URL')
 
         video = YouTube(url)
         stream = video.streams.get_highest_resolution()
         filename = video.title + '.mp4'
 
-        # abre a janela de seleção de diretório
+        # Opens a file dialog to select a directory
         root = Tk()
         root.withdraw()
         directory = askdirectory()
 
-        # salva o arquivo no diretório selecionado
+        # Saves the file in the selected directory
         filepath = os.path.join(directory, filename)
         stream.download(output_path=directory, filename=filename)
 
-        return send_file(filepath, as_attachment=True)
+        return send_file(filepath, as_attachment=True, attachment_filename=filename)
 
     except ValueError as e:
         message = str(e)
         return render_template('result.html', message=message)
 
-    except:
-        message = 'Ocorreu um erro'
+    except Exception as e:
+        message = 'An error occurred: {}'.format(str(e))
         return render_template('result.html', message=message)
 
 if __name__ == '__main__':
